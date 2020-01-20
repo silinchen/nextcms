@@ -1,0 +1,38 @@
+.main {
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}
+.content {
+  flex: 7;
+  padding-right: 40px;
+}
+.img {
+  width: 100%;
+  height: 300px;
+  border-radius: 4px;
+  margin-bottom: 25px;
+}
+.right__sidebar {
+  display: none;
+  flex: 3;
+}
+@media screen and (min-width: 768px) {
+  .right__sidebar {
+    display: block;
+  }
+}
+@media screen and (max-width: 768px) {
+  .content {
+    padding: 0;
+  }
+}
+
+.post__categories {
+  margin-bottom: 30px;
+  padding: 20px;
+  width: 100%;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  background-color: #fff;
+}

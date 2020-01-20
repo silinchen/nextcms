@@ -1,0 +1,39 @@
+.header {
+  // display: flex;
+  // width: 100%;
+  // background: #fff;
+  // padding: 0;
+  height: 50px;
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+  padding: 0;
+}
+.trigger {
+  display: flex;
+  float: left;
+  height: 100%;
+  align-items: center;
+  font-size: 18px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+  &:hover {
+    color: #1890ff;
+  }
+}
+.right__menus {
+  display: flex;
+  float: right;
+  height: 100%;
+  align-items: center;
+  margin-right: 15px;
+  >:not(:last-child) {
+    margin-right: 15px;
+  }
+}
+.avatar__wrapper {
+  >i {
+    margin-left: 5px;
+  }
+}
