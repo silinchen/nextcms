@@ -1,5 +1,5 @@
 {
-  "name": "xyzcms",
+  "name": "casscms",
   "version": "0.1.0",
   "description": "一个使用 react 开发的 CMS、博客，next.js 框架做服务器端渲染，koa2 实现 RESTFul 风格后台接口",
   "keywords": [
@@ -12,7 +12,7 @@
     "webpack",
     "restful"
   ],
-  "author": "cslxyz <silinccc@gmail.com>",
+  "author": "silinchen <silinccc@gmail.com>",
   "license": "MIT",
   "scripts": {
     "next:dev": "next dev",

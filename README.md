@@ -28,7 +28,7 @@ MongoDB
 ```shell
 # 拷贝项目
 git clone https://github.com/silinchen/casscms
-cd xyzcms
+cd casscms
 # 安装依赖
 yarn
 # 初始化数据
