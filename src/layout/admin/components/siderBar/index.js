@@ -5,14 +5,10 @@ import { Layout, Menu, Icon } from 'antd'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { setSideBarOpenKeys, setSideBarSelectKeys } from '@store/actions'
+import Scrollbar from '@components/scrollbar'
 import SiderItem from './siderBarItem'
 import styles from './styles.less'
 import { createTree } from '@utils'
-
-const ScrollAreaWithNoSSR = dynamic(
-  () => import('react-scrollbar'),
-  { ssr: false }
-)
 
 const { Sider } = Layout
 
@@ -41,10 +37,8 @@ const SiderBar = ({ dispatch, collapsed, menus, sideBarOpenKeys = [], sideBarSel
           <span>{collapsed ? 'C' : '后台管理系统'}</span> :
         </div>
       </Link>
-      <ScrollAreaWithNoSSR
-        speed={0.5}
+      <Scrollbar
         className={styles.menu__wrapper}
-        horizontal={false}
       >
         <Menu
           theme="dark"
@@ -57,7 +51,7 @@ const SiderBar = ({ dispatch, collapsed, menus, sideBarOpenKeys = [], sideBarSel
             <SiderItem key={item._id} item={item} />
           ))}
         </Menu>
-      </ScrollAreaWithNoSSR>
+      </Scrollbar>
     </Sider>
   )
 }

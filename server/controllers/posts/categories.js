@@ -17,8 +17,8 @@ const rules = {
 
 class PostsCategoryContrller {
   async find(ctx) {
-    let { pageSize = 10, current = 1, isPaging = 1 } = ctx.query
-    if(isPaging) {
+    if(ctx.query.pageSize0) {
+      let { pageSize = 10, current = 1 } = ctx.query
       pageSize = _num(pageSize)
       current = _num(current)
       ctx.body = await PostsCategoriesModel.find().limit(pageSize).skip((current - 1) * pageSize)

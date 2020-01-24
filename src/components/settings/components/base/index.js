@@ -1,28 +1,37 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Form, Input, Upload, message } from 'antd';
 import { connect } from 'react-redux'
 import { updateManagerInfo } from '@store/actions'
+import UploadImage from '@components/uploadImage'
 import styles from './styles.less';
 
 const FormItem = Form.Item;
 
 // 头像组件 方便以后独立，增加裁剪之类的功能
-const AvatarView = ({ avatar }) => (
-  <>
-    <div className={styles.avatar_title}>头像</div>
-    <div className={styles.avatar}>
-      <img src={avatar} alt="avatar" />
-    </div>
-    <Upload
-      fileList={[]}
-      action="/api/upload"
-    >
-      <div className={styles.button_view}>
-        <Button icon="upload">更改头像</Button>
+const AvatarView = connect()(props => {
+  const { avatar, dispatch } = props
+  const [avatarUrl, setAvatarUrl] = useState(avatar || '')
+  const handleChange = avatarUrl => {
+    dispatch(updateManagerInfo({ avatarUrl }, () => {
+      setAvatarUrl(avatarUrl)
+    }))
+  }
+  return (
+    <>
+      <div className={styles.avatar_title}>头像</div>
+      <div className={styles.avatar}>
+        <img src={avatarUrl} alt="avatar" />
       </div>
-    </Upload>
-  </>
-);
+      <UploadImage
+        onChange={handleChange}
+      >
+        <div className={styles.button_view}>
+          <Button icon="upload">更改头像</Button>
+        </div>
+      </UploadImage>
+    </>
+  )
+})
 
 const BaseView = props => {
   let view

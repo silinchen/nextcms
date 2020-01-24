@@ -1,9 +1,8 @@
-import React, { forwardRef, useImperativeHandle } from 'react'
-import { Form, Input, Select, TreeSelect } from 'antd'
+import React, { forwardRef, useImperativeHandle, useState } from 'react'
+import { Form, Input, Select, TreeSelect, Icon } from 'antd'
 import Editor from './editor'
 import UploadImage from '@components/uploadImage'
 import { createTitleAndValueAndKeyTree } from '@utils'
-
 
 const { Option } = Select
 const { TextArea } = Input;
@@ -36,8 +35,8 @@ const rules = {
 }
 
 const PostForm = forwardRef((props, ref) => {
-  const { form, post, categories = [], tags = [], handleSubmit } = props
-  const { getFieldDecorator, validateFieldsAndScroll } = form
+  const { form, post, categories = [], tags = [] } = props
+  const { getFieldDecorator } = form
 
   useImperativeHandle(ref, () => ({ form }))
 
@@ -69,7 +68,14 @@ const PostForm = forwardRef((props, ref) => {
         )}
       </Form.Item>
       <Form.Item label="缩略图">
-        {getFieldDecorator('imageUrl', { initialValue: post.imageUrl })(<UploadImage />)}
+        {getFieldDecorator('imageUrl', { initialValue: post.imageUrl })(
+          <UploadImage
+            name="file"
+            style={{ height: '102px' }}
+            listType="picture-card"
+            className="avatar-uploader"
+          />
+        )}
       </Form.Item>
       <Form.Item label="摘要">
         {getFieldDecorator('abstract', {

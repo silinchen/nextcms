@@ -5,9 +5,10 @@ import Detail from '@components/post/detail'
 import { getPostBySeoUrl, postsPageViewing } from '@store/actions'
 
 const Post = props => {
+  const { post } = props
   return (
-    <Layout>
-      <Detail post={props.post} />
+    <Layout title={post.title}>
+      <Detail post={post} />
     </Layout>
   )
 }

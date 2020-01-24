@@ -38,10 +38,10 @@ module.exports = withBundleAnalyzer(withLess({
         ...config.resolve.alias
       }
       config.optimization.splitChunks.cacheGroups = {
-        // 把只在后台用的大部分依赖单独打包，减少首页公用 js 文件大小
+        // 把只在后台用的大部分文件单独打包，减少首页公用 js 文件大小，提高首页访问速度
         adminlib: {
           name: 'adminlib',
-          test: /[\\/]node_modules[\\/](antd|@ant-design|moment|async-validator|rc-.*|elliptic|bn.js|readable-stream|asn1.js|buffer|hash.js|lodash|dom-align|tinycolor2|sha.js|diffie-hellman|browserify-sign|parse-asn1|semver|dom-scroll-into-view|des.js|mini-store|util|css-animation|create-react-class|add-dom-event-listener|events|resize-observer-polyfill|node-libs-browser|mutationobserver-shim|babel-runtime|pbkdf2|jwa|jws|public-encrypt|md5.js|screenfull|)[\\/]/,
+          test: /(([\\/]src[\\/]layout[\\/]admin[\\/])|([\\/]node_modules[\\/](antd|@ant-design|moment|async-validator|rc-.*|elliptic|bn.js|readable-stream|asn1.js|buffer|hash.js|lodash|dom-align|tinycolor2|sha.js|diffie-hellman|browserify-sign|parse-asn1|semver|dom-scroll-into-view|des.js|mini-store|util|css-animation|create-react-class|add-dom-event-listener|events|resize-observer-polyfill|node-libs-browser|mutationobserver-shim|babel-runtime|pbkdf2|jwa|jws|public-encrypt|md5.js|screenfull|)[\\/]))/,
           priority: 20,
           // chunks: 'all',
           // enforce: true

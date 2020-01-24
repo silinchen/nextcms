@@ -4,7 +4,10 @@ import Router from 'next/router'
 import { connect } from 'react-redux'
 import { message, Button } from 'antd'
 import Layout from '@layout/admin'
-import { getPostsCategories, getPostsTags, getPostById, addPost, updatePost  } from '@store/actions'
+import {
+  getPostsCategories, getPostsTags, getPostById,
+  addPost, updatePost, resetPost
+} from '@store/actions'
 import withManagerAuth from '@components/withManagerAuth'
 
 const PostFormWithNoSSR = dynamic(
@@ -52,12 +55,14 @@ const PostForm = (props) => {
 
 PostForm.getInitialProps = async (props) => {
   const { store: { dispatch }, query: { id } } = props.ctx
-  dispatch(getPostsCategories({ isPaging: 0 }))
-  dispatch(getPostsTags({ isPaging: 0 }))
+  dispatch(getPostsCategories())
+  dispatch(getPostsTags())
   let action = 'add'
   if (id) {
     dispatch(getPostById(id, { fields: 'categories;tags;content;' }))
     action = 'update'
+  } else {
+    dispatch(resetPost())
   }
   return { action, id }
 }

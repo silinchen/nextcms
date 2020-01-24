@@ -1,52 +1,59 @@
-import { all, fork, call, delay, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
-// import { message } from 'antd'
-import { setToken } from '@utils/auth'
-import Api from '@services/index.js'
-import * as types from '@store/actionTypes'
-import * as actions from '@store/actions'
+import { all, call, put, takeEvery } from 'redux-saga/effects'
+import {
+  getPostsTags, getPostsTagsCount,
+  addPostsTag, deletePostsTag, updatePostsTag
+} from '@services/post/tag'
+import { getPostsTagsSucceeded, getPostsTagsCountSucceeded } from '@store/actions'
+import {
+  GET_POSTS_TAGS, GET_POSTS_TAGS_COUNT,
+  ADD_POSTS_TAG, DELETE_POSTS_TAG, UPDATE_POSTS_TAG
+} from '@store/actionTypes'
 
 // 文章标签
-function* getPostsTagsList({ params }) {
-  const data = yield call(Api.getPostsTags, params)
-  yield put(actions.getPostsTagsSucceeded(data))
-}
-function* getPostsTagsCount() {
-  const count = yield call(Api.getPostsTagsCount)
-  yield put(actions.getPostsTagsCountSucceeded(count))
-}
-function* addPostsTag({ tag, callback }) {
+function* _getList({ params }) {
   try {
-    yield call(Api.addPostsTag, tag)
-    callback && callback()
+    const data = yield call(getPostsTags, params)
+    yield put(getPostsTagsSucceeded(data))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* updatePostsTag({ id, tag, callback }) {
+function* _getCount() {
   try {
-    yield call(Api.updatePostsTag, id, tag)
-    callback && callback()
+    const count = yield call(getPostsTagsCount)
+    yield put(getPostsTagsCountSucceeded(count))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* deletePostsTag({ id, callback }) {
+function* _add({ tag, callback }) {
   try {
-    yield call(Api.deletePostsTag, id)
+    yield call(addPostsTag, tag)
     callback && callback()
   } catch (error) {
-    // message.error(error.message)
+  }
+}
+function* _delete({ id, callback }) {
+  try {
+    yield call(deletePostsTag, id)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _update({ id, tag, callback }) {
+  try {
+    yield call(updatePostsTag, id, tag)
+    callback && callback()
+  } catch (error) {
   }
 }
 
 function* watchTagsSaga() {
   yield all([
     // 文章标签
-    takeEvery(types.GET_POSTS_TAGS, getPostsTagsList),
-    takeEvery(types.GET_POSTS_TAGS_COUNT, getPostsTagsCount),
-    takeEvery(types.ADD_POSTS_TAG, addPostsTag),
-    takeEvery(types.UPDATE_POSTS_TAG, updatePostsTag),
-    takeEvery(types.DELETE_POSTS_TAG, deletePostsTag)
+    takeEvery(GET_POSTS_TAGS, _getList),
+    takeEvery(GET_POSTS_TAGS_COUNT, _getCount),
+    takeEvery(ADD_POSTS_TAG, _add),
+    takeEvery(DELETE_POSTS_TAG, _delete),
+    takeEvery(UPDATE_POSTS_TAG, _update),
   ])
 }
 export default watchTagsSaga

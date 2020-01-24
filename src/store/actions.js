@@ -18,7 +18,7 @@ export const deletePostsCategory = (id, callback )=> ({ type: types.DELETE_POSTS
 export const getPostsTags = (params = {}) => ({ type: types.GET_POSTS_TAGS, params })
 export const getPostsTagsSucceeded = tags => ({ type: types.GET_POSTS_TAGS_SUCCEEDED, tags })
 export const getPostsTagsCount = () => ({ type: types.GET_POSTS_TAGS_COUNT })
-export const getPostsTagsCountSucceeded = total => ({ type: types.GET_POSTS_CATEGORIES_COUNT_SUCCEEDED, total })
+export const getPostsTagsCountSucceeded = total => ({ type: types.GET_POSTS_TAGS_COUNT_SUCCEEDED, total })
 export const addPostsTag = (tag, callback) => ({ type: types.ADD_POSTS_TAG, tag, callback })
 export const updatePostsTag = (id, tag, callback) => ({ type: types.UPDATE_POSTS_TAG, id, tag, callback })
 export const deletePostsTag = (id, callback )=> ({ type: types.DELETE_POSTS_TAG, id, callback })
@@ -30,6 +30,7 @@ export const getPostsCount = () => ({ type: types.GET_POSTS_COUNT })
 export const getPostsCountSucceeded = total => ({ type: types.GET_POSTS_COUNT_SUCCEEDED, total })
 export const getPostById = (id, params = {}) => ({ type: types.GET_POST_BY_ID, id, params })
 export const getPostSucceeded = post => ({ type: types.GET_POST_SUCCEEDED, post })
+export const resetPost = () => ({ type: types.RESET_POST })
 export const addPost = (post, callback) => ({ type: types.ADD_POST, post, callback })
 export const updatePost = (id, post, callback) => ({ type: types.UPDATE_POST, id, post, callback })
 export const deletePost = (id, callback )=> ({ type: types.DELETE_POST, id, callback })
@@ -60,8 +61,7 @@ export const setManagerTags = tags => ({ type: types.SET_MANAGER_TAGS, tags })
 export const updateManagerInfo = (data, callback) => ({ type: types.UPDATE_MANAGER_INFO, data, callback })
 export const updateManagerTags = tags => ({ type: types.UPDATE_MANAGER_TAGS, tags })
 export const changeManagerPassword = (data, callback) => ({ type: types.CHANGE_MANAGER_PASSWORD, data, callback })
-
-
+  
 // 资源管理
 export const getResources = (params = {}) => ({ type: types.GET_RESOURCES, params })
 export const getResourcesSucceeded = list => ({ type: types.GET_RESOURCES_SUCCEEDED, list })

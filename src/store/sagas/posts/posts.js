@@ -1,69 +1,81 @@
-import { all, fork, call, delay, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
-// import { message } from 'antd'
-import Api from '@services/index.js'
-import * as types from '@store/actionTypes'
-import * as actions from '@store/actions'
+import { all, call, put, takeEvery } from 'redux-saga/effects'
+import {
+  getPosts, getPostsCount, getPostById, getPostBySeoUrl,
+  addPost, deletePost, updatePost, postsPageViewing
+} from '@services/post'
+import { getPostsSucceeded, getPostsCountSucceeded, getPostSucceeded } from '@store/actions'
+import {
+  GET_POSTS, GET_POSTS_COUNT, GET_POST_BY_ID, GET_POST_BY_SEOURL,
+  ADD_POST, DELETE_POST, UPDATE_POST, POSTS_PAGEVIEWING
+} from '@store/actionTypes'
 
 // 文章管理
-function* getPostsList({ params }) {
-  const data = yield call(Api.getPosts, params)
-  yield put(actions.getPostsSucceeded(data))
-}
-function* getPostsCount() {
-  const count = yield call(Api.getPostsCount)
-  yield put(actions.getPostsCountSucceeded(count))
-}
-function* getPostById({ id, params }) {
-  const data = yield call(Api.getPostById, id, params)
-  yield put(actions.getPostSucceeded(data))
-}
-function* addPost({ post, callback }) {
+function* _getList({ params }) {
   try {
-    yield call(Api.addPost, post)
-    callback && callback()
+    const data = yield call(getPosts, params)
+    yield put(getPostsSucceeded(data))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* updatePost({ id, post, callback }) {
+function* _getCount() {
   try {
-    yield call(Api.updatePost, id, post)
-    callback && callback()
+    const count = yield call(getPostsCount)
+    yield put(getPostsCountSucceeded(count))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* deletePost({ id, callback }) {
+function* _getById({ id, params }) {
   try {
-    yield call(Api.deletePost, id)
-    callback && callback()
+    const data = yield call(getPostById, id, params)
+    yield put(getPostSucceeded(data))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* getPostBySeoUrl({ seoUrl, params }) {
-  const data = yield call(Api.getPostBySeoUrl, seoUrl, params)
-  yield put(actions.getPostSucceeded(data))
-}
-function* postsPageViewing({ seoUrl }) {
+function* _getBySeoUrl({ seoUrl, params }) {
   try {
-    yield call(Api.postsPageViewing, seoUrl)
+    const data = yield call(getPostBySeoUrl, seoUrl, params)
+    yield put(getPostSucceeded(data))
+  } catch (error) {
+  }
+}
+function* _add({ post, callback }) {
+  try {
+    yield call(addPost, post)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _delete({ id, callback }) {
+  try {
+    yield call(deletePost, id)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _update({ id, post, callback }) {
+  try {
+    yield call(updatePost, id, post)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _pageViewing({ seoUrl }) {
+  try {
+    yield call(postsPageViewing, seoUrl)
   } catch (error) {
   }
 }
 
 function* watchPostsSaga() {
   yield all([
-    // 文章管理
-    takeEvery(types.GET_POSTS, getPostsList),
-    takeEvery(types.GET_POSTS_COUNT, getPostsCount),
-    takeEvery(types.GET_POST_BY_ID, getPostById),
-    takeEvery(types.ADD_POST, addPost),
-    takeEvery(types.UPDATE_POST, updatePost),
-    takeEvery(types.DELETE_POST, deletePost),
-    // 文章相关，主要用于前端页面
-    takeEvery(types.GET_POST_BY_SEOURL, getPostBySeoUrl),
-    takeEvery(types.POSTS_PAGEVIEWING, postsPageViewing),
+    takeEvery(GET_POSTS, _getList),
+    takeEvery(GET_POSTS_COUNT, _getCount),
+    takeEvery(GET_POST_BY_ID, _getById),
+    takeEvery(GET_POST_BY_SEOURL, _getBySeoUrl),
+    takeEvery(ADD_POST, _add),
+    takeEvery(DELETE_POST, _delete),
+    takeEvery(UPDATE_POST, _update),
+    takeEvery(POSTS_PAGEVIEWING, _pageViewing),
   ])
 }
 export default watchPostsSaga

@@ -1,101 +1,108 @@
-import { all, fork, call, delay, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
+import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import { setToken } from '@utils/auth'
-import { createTree } from '@utils'
-import Api from '@services/index.js'
+import {
+  getManagers, getManagersCount,
+  addManager, deleteManager, updateManager,
+  managerLogin, getManagerInfo, updateManagerInfo
+} from '@services/admin/manager'
 import {
   getManagersSucceeded, getManagersCountSucceeded, setManagerInfo, setManagerTags
 } from '@store/actions'
 import {
-  GET_MANAGERS, GET_MANAGERS_COUNT, GET_MANAGER_INFO,
-  ADD_MANAGER, UPDATE_MANAGER, DELETE_MANAGER, MANAGER_LOGIN,
-  UPDATE_MANAGER_INFO, UPDATE_MANAGER_TAGS, CHANGE_MANAGER_PASSWORD
+  GET_MANAGERS, GET_MANAGERS_COUNT,
+  ADD_MANAGER, DELETE_MANAGER, UPDATE_MANAGER,
+  MANAGER_LOGIN, GET_MANAGER_INFO, UPDATE_MANAGER_INFO,
+  UPDATE_MANAGER_TAGS, CHANGE_MANAGER_PASSWORD
 } from '@store/actionTypes'
 
 // 用户管理（管理员）
-function* getManagersList({ params }) {
-  const data = yield call(Api.getManagers, params)
-  yield put(getManagersSucceeded(data))
-}
-function* getManagersCount() {
-  const count = yield call(Api.getManagersCount)
-  yield put(getManagersCountSucceeded(count))
-}
-function* addManager({ data, callback }) {
+function* _getList({ params }) {
   try {
-    yield call(Api.addManager, data)
-    callback && callback()
+    const data = yield call(getManagers, params)
+    yield put(getManagersSucceeded(data))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* updateManager({ id, data, callback }) {
+function* _getCount() {
   try {
-    yield call(Api.updateManager, id, data)
-    callback && callback()
+    const count = yield call(getManagersCount)
+    yield put(getManagersCountSucceeded(count))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* deleteManager({ id, callback }) {
+function* _add({ data, callback }) {
   try {
-    yield call(Api.deleteManager, id)
+    yield call(addManager, data)
     callback && callback()
   } catch (error) {
-    // message.error(error.message)
   }
 }
-
-// 用户登录（管理员）
-function* managerLogin({ data, callback, errorCallback }) {
+function* _delete({ id, callback }) {
   try {
-    const { token } = yield call(Api.managerLogin, data)
+    yield call(deleteManager, id)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _update({ id, data, callback }) {
+  try {
+    yield call(updateManager, id, data)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _Login({ data, callback, errorCallback }) {
+  try {
+    const { token } = yield call(managerLogin, data)
     setToken(token)
     callback && callback()
   } catch (error) {
     errorCallback && errorCallback(error)
   }
 }
-function* getManagersInfo({ callback, errorCallback }) {
+function* _getInfo({ callback, errorCallback }) {
   try {
-    const managerInfo = yield call(Api.getManagerInfo)
-    yield put(setManagerInfo(managerInfo))
-    callback && callback(menusTree)
+    const info = yield call(getManagerInfo)
+    yield put(setManagerInfo(info))
+    callback && callback(info.menus)
   } catch (error) {
     errorCallback && errorCallback(error)
   }
 }
-function* updateManagerInfo({ data, callback }) {
-  const manager = yield call(Api.updateManagerInfo, data)
-  callback && callback()
-}
-function* updateManagerTags({ tags }) {
-  const manager = yield call(Api.updateManagerInfo, { tags })
-  if (manager) {
-    yield put(setManagerTags(tags))
+function* _updateInfo({ data, callback }) {
+  try {
+    const manager = yield call(updateManagerInfo, data)
+    callback && callback()
+  } catch (error) {
   }
 }
-function* changeManagerPassword({ data, callback }) {
-  console.log(data)
-  const manager = yield call(Api.updateManagerInfo, data)
+function* _updateTags({ tags }) {
+  try {
+    const manager = yield call(updateManagerInfo, { tags })
+    if (manager) {
+      yield put(setManagerTags(tags))
+    }
+  } catch (error) {
+  }
+}
+function* _changePassword({ data, callback }) {
+  const manager = yield call(updateManagerInfo, data)
   callback && callback()
 }
-
 
 function* watchManagersData() {
   yield all([
     // 用户管理 (管理员)
-    takeLatest(GET_MANAGERS, getManagersList),
-    takeLatest(GET_MANAGERS_COUNT, getManagersCount),
-    takeEvery(ADD_MANAGER, addManager),
-    takeEvery(UPDATE_MANAGER, updateManager),
-    takeEvery(DELETE_MANAGER, deleteManager),
-    // 用户登录（管理员）
-    takeLatest(MANAGER_LOGIN, managerLogin),
-    takeLatest(GET_MANAGER_INFO, getManagersInfo),
-
-    takeEvery(UPDATE_MANAGER_INFO, updateManagerInfo),
-    takeEvery(UPDATE_MANAGER_TAGS, updateManagerTags),
-    takeEvery(CHANGE_MANAGER_PASSWORD, changeManagerPassword),
+    takeLatest(GET_MANAGERS, _getList),
+    takeLatest(GET_MANAGERS_COUNT, _getCount),
+    takeEvery(ADD_MANAGER, _add),
+    takeEvery(DELETE_MANAGER, _delete),
+    takeEvery(UPDATE_MANAGER, _update),
+    takeLatest(MANAGER_LOGIN, _Login),
+    takeLatest(GET_MANAGER_INFO, _getInfo),
+    takeEvery(UPDATE_MANAGER_INFO, _updateInfo),
+    takeEvery(UPDATE_MANAGER_TAGS, _updateTags),
+    takeEvery(CHANGE_MANAGER_PASSWORD, _changePassword),
   ])
 }
 export default watchManagersData

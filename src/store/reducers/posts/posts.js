@@ -1,7 +1,8 @@
 import {
   GET_POSTS_SUCCEEDED,
   GET_POSTS_COUNT_SUCCEEDED,
-  GET_POST_SUCCEEDED
+  GET_POST_SUCCEEDED,
+  RESET_POST,
 } from '@store/actionTypes'
 
 const initialState = {
@@ -30,6 +31,8 @@ export default function posts(state = initialState, action) {
       return  { ...state, total: action.total }
     case GET_POST_SUCCEEDED:
       return  { ...state, post: action.post }
+    case RESET_POST:
+      return  { ...state, post: initialState.post }
     default:
       return state
   }

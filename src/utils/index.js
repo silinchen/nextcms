@@ -6,7 +6,7 @@ import cryptoJS from 'crypto-js'
  */
 export const _createTree = (data, parentId = '', type = 0) => {
   const tree = []
-  data.forEach(item => {
+  data.forEach((item, index) => {
     if((Array.isArray(item.parentId) && item.parentId.includes(parentId)) || item.parentId === parentId) {
       const children = _createTree(data, item._id, type)
       let newItem = {}

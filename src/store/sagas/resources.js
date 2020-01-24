@@ -1,53 +1,59 @@
-import { all, fork, call, delay, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
-// import { message } from 'antd'
-import { setToken } from '@utils/auth'
-import Api from '@services/index.js'
-import * as types from '../actionTypes'
-import * as actions from '../actions'
+import { all, call, put, takeEvery } from 'redux-saga/effects'
+import {
+  getResources, getResourcesCount,
+  addResource, deleteResource, updateResource
+} from '@services/admin/resource'
+import { getResourcesSucceeded, getResourcesCountSucceeded } from '@store/actions'
+import {
+  GET_RESOURCES, GET_RESOURCES_COUNT,
+  ADD_RESOURCE, DELETE_RESOURCE, UPDATE_RESOURCE
+} from '@store/actionTypes'
 
 // 资源管理
-function* getResourcesList({ params }) {
-  const data = yield call(Api.getResources, params)
-  yield put(actions.getResourcesSucceeded(data))
-}
-function* getResourcesCount() {
-  const count = yield call(Api.getResourcesCount)
-  yield put(actions.getResourcesCountSucceeded(count))
-}
-function* addResource({ data, callback }) {
+function* _getList({ params }) {
   try {
-    yield call(Api.addResource, data)
-    callback && callback()
+    const data = yield call(getResources, params)
+    yield put(getResourcesSucceeded(data))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* updateResource({ id, data, callback }) {
+function* _getCount() {
   try {
-    yield call(Api.updateResource, id, data)
-    callback && callback()
+    const count = yield call(getResourcesCount)
+    yield put(getResourcesCountSucceeded(count))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* deleteResource({ id, callback }) {
+function* _add({ data, callback }) {
   try {
-    yield call(Api.deleteResource, id)
+    yield call(addResource, data)
     callback && callback()
   } catch (error) {
-    // message.error(error.message)
   }
 }
-
+function* _delete({ id, callback }) {
+  try {
+    yield call(deleteResource, id)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _update({ id, data, callback }) {
+  try {
+    yield call(updateResource, id, data)
+    callback && callback()
+  } catch (error) {
+  }
+}
 
 function* watchResourcesData() {
   yield all([
     // 资源管理
-    takeEvery(types.GET_RESOURCES, getResourcesList),
-    takeEvery(types.GET_RESOURCES_COUNT, getResourcesCount),
-    takeEvery(types.ADD_RESOURCE, addResource),
-    takeEvery(types.UPDATE_RESOURCE, updateResource),
-    takeEvery(types.DELETE_RESOURCE, deleteResource),
+    takeEvery(GET_RESOURCES, _getList),
+    takeEvery(GET_RESOURCES_COUNT, _getCount),
+    takeEvery(ADD_RESOURCE, _add),
+    takeEvery(DELETE_RESOURCE, _delete),
+    takeEvery(UPDATE_RESOURCE, _update),
   ])
 }
 export default watchResourcesData

@@ -4,14 +4,12 @@ import SparkMD5 from 'spark-md5'
 import { precheck } from '@services/upload'
 
 const UploadImage = (props, ref) => {
-  const { value } = props
-  const [imageUrl, setImageUrl] = useState('')
-  const [loading, setLoading] = useState(false)
-  let filename = ''
+  const {
+    children, value, onChange, action = '/api/upload', name, className, listType, style,
+    ...rest
+  } = props
   
-  useEffect(() => {
-    setImageUrl(value)
-  }, [value])
+  const [loading, setLoading] = useState(false)
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -28,16 +26,12 @@ const UploadImage = (props, ref) => {
       fileReader.onload = async e => {
         spark.appendBinary(e.target.result);
         const md5 = spark.end()
-        filename = `${md5}.${type}`
         // 检查文件是否存在，存在则不上传。从而实现秒传
-        precheck(filename).then(rst => {
+        precheck(`${md5}.${type}`).then(rst => {
           const { code } = rst
           if( code === 1 && url) {
             // 存在
-            getBase64(file, imageUrl =>{
-              setImageUrl(imageUrl)
-              setLoading(true)
-            })
+            onChange && onChange(url)
             reject()
           } else {
             resolve()
@@ -67,21 +61,19 @@ const UploadImage = (props, ref) => {
 
   const handleChange = info => {
     if (info.file.status === 'uploading') {
-      setLoading(true)
+      setLoading && setLoading(true)
       return
     }
     if (info.file.status === 'done') {
       // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl =>{
-        setImageUrl(imageUrl)
-        setLoading(true)
-      })
-      props.onChange(info.file.response.url || '')
+      onChange && onChange(info.file.response.url || '')
+      setLoading && setLoading(false)
     }
   }
   
   const transformFile = (file) => {
-    const type = file.name.split('.')[1]
+    const names = file.name.split('.')
+    const type = (names && names[1]) || ''
     // 修改文件名为 md5 字符串
     return new Promise((resolve, reject) => {
       var fileReader = new FileReader();
@@ -90,31 +82,32 @@ const UploadImage = (props, ref) => {
       fileReader.onload = async e => {
         spark.appendBinary(e.target.result);
         const md5 = spark.end()
-        filename = `${md5}.${type}`
-        resolve(new File([file], filename,{ type:file.type }))
+        resolve(new File([file], `${md5}.${type}`, { type:file.type }))
       }
     })
   }
-  
+
   const uploadButton = (
     <div>
       <Icon type={loading ? 'loading' : 'plus'} />
       <div className="ant-upload-text">上传</div>
     </div>
   )
+
   return (
-    <div {...props} style={{ height: '102px' }}>
+    <div {...rest} style={style}>
       <Upload
-        name="file"
-        listType="picture-card"
-        className="avatar-uploader"
+        // ref={ref}
+        name={name}
+        listType={listType}
+        className={className}
         showUploadList={false}
-        action="/api/upload"
+        action={action}
         beforeUpload={beforeUpload}
         onChange={handleChange}
         transformFile={transformFile}
       >
-        {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+        {children || (value ? <img src={value} alt="" style={{ width: '100%' }} /> : uploadButton)}
       </Upload>
     </div>
   )

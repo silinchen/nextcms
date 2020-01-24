@@ -1,53 +1,59 @@
-import { all, fork, call, delay, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
-// import { message } from 'antd'
-import { setToken } from '@utils/auth'
-import Api from '@services/index.js'
-import * as types from '../actionTypes'
-import * as actions from '../actions'
-import watchPostsData from './posts'
+import { all, call, put, takeEvery } from 'redux-saga/effects'
+import {
+  getRoles, getRolesCount,
+  addRole, deleteRole, updateRole
+} from '@services/admin/role'
+import { getRolesSucceeded, getRolesCountSucceeded } from '@store/actions'
+import {
+  GET_ROLES, GET_ROLES_COUNT,
+  ADD_ROLE, UPDATE_ROLE, DELETE_ROLE
+} from '@store/actionTypes'
 
 // 角色权限
-function* getRolesList({ params }) {
-  const data = yield call(Api.getRoles, params)
-  yield put(actions.getRolesSucceeded(data))
-}
-function* getRolesCount() {
-  const count = yield call(Api.getRolesCount)
-  yield put(actions.getRolesCountSucceeded(count))
-}
-function* addRole({ data, callback }) {
+function* _getList({ params }) {
   try {
-    yield call(Api.addRole, data)
-    callback && callback()
+    const data = yield call(getRoles, params)
+    yield put(getRolesSucceeded(data))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* updateRole({ id, data, callback }) {
+function* _getCount() {
   try {
-    yield call(Api.updateRole, id, data)
-    callback && callback()
+    const count = yield call(getRolesCount)
+    yield put(getRolesCountSucceeded(count))
   } catch (error) {
-    // message.error(error.message)
   }
 }
-function* deleteRole({ id, callback }) {
+function* _add({ data, callback }) {
   try {
-    yield call(Api.deleteRole, id)
+    yield call(addRole, data)
     callback && callback()
   } catch (error) {
-    // message.error(error.message)
+  }
+}
+function* _delete({ id, callback }) {
+  try {
+    yield call(deleteRole, id)
+    callback && callback()
+  } catch (error) {
+  }
+}
+function* _update({ id, data, callback }) {
+  try {
+    yield call(updateRole, id, data)
+    callback && callback()
+  } catch (error) {
   }
 }
 
 function* watchRolesData() {
   yield all([
     // 角色权限
-    takeEvery(types.GET_ROLES, getRolesList),
-    takeEvery(types.GET_ROLES_COUNT, getRolesCount),
-    takeEvery(types.ADD_ROLE, addRole),
-    takeEvery(types.UPDATE_ROLE, updateRole),
-    takeEvery(types.DELETE_ROLE, deleteRole),
+    takeEvery(GET_ROLES, _getList),
+    takeEvery(GET_ROLES_COUNT, _getCount),
+    takeEvery(ADD_ROLE, _add),
+    takeEvery(DELETE_ROLE, _delete),
+    takeEvery(UPDATE_ROLE, _update),
   ])
 }
 export default watchRolesData

@@ -11,15 +11,30 @@ const rules = {
   imageUrl: { type: 'string', required: false, allowEmpty: true } , // 文章缩略图
   content: { type: 'string', required: false, allowEmpty: true }, // 文章内容
   categories: { type: 'array', itemType: 'string'  }, // 分类
-  tags: { type: 'array', itemType: 'string', rule: { required: false, allowEmpty: true } } , // 标签
-  // author: { type: 'string', required: false, allowEmpty: true }, // 文档作者（管理员）
-  // uauthor: { type: 'string', required: false, allowEmpty: true }, // 文档作者(普通用户)
+  tags: { type: 'array', itemType: 'string', rule: { required: false, allowEmpty: true } }, // 标签
   wordNum: 'number' // 字数
 }
-
+const findRules = {
+  pageSize: { type: 'string', required: false, allowEmpty: true }, // 单页数量
+  current: { type: 'string', required: false, allowEmpty: true } , // 当前页
+  fields: { type: 'string', required: false, allowEmpty: true }, // 查询字段，多个用 ; 隔开
+  populates: { type: 'string', required: false, allowEmpty: true }, // 关联查询字段，多个用 ; 隔开
+  cateSeoUrl: { type: 'string', required: false }, // 分类的 seourl
+  q: { type: 'string', required: false }, // 搜索关键词
+  sort: { type: 'enum', required: false, values: ['createdDate', 'updatedDate'] }, // 排序字段
+  direction: { type: 'enum', required: false, values: ['asc', 'desc', 'ascending', 'descending', '1', '-1'] }, // 升序、降序
+}
+const findByXXRules = {
+  fields: { type: 'string', required: false, allowEmpty: true }, // 查询字段，多个用 ; 隔开
+  populates: { type: 'string', required: false, allowEmpty: true }, // 关联查询字段，多个用 ; 隔开
+}
 class PostsContrller {
   async find(ctx) {
-    let { pageSize = 10, current = 1, fields = '', populates = '', cateSeoUrl } = ctx.query
+    ctx.verifyParams(findRules)
+    let {
+      pageSize = 10, current = 1, fields = '', populates = '', cateSeoUrl, q,
+      sort = 'createdDate', direction = 'desc'
+    } = ctx.query
     pageSize = _num(pageSize)
     current = _num(current)
     const selectFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('');
@@ -31,15 +46,24 @@ class PostsContrller {
       const cate = await PostsCategoriesModel.findOne({ seoUrl: cateSeoUrl })
       if (!cate) { ctx.throw(404, '分类不存在') }
       filter.categories = cate._id
+    } else if(q) {
+      // 搜索关键词，正则匹配
+      const regex = new RegExp(q, 'i')
+      filter.$or = [
+        { title: { $regex: regex } },
+        { content: { $regex: regex } }
+      ]
     }
-
+    const sortOptions = { [sort]: direction }
     ctx.body = await PostsModel.
       find(filter).limit(pageSize).
       skip((current - 1) * pageSize).
       select(selectFields).
-      populate(populateOptions)
+      populate(populateOptions).
+      sort(sortOptions)
   }
   async findById(ctx) {
+    ctx.verifyParams(findByXXRules)
     let { fields = '', populates = '' } = ctx.query
     const selectFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('');
     const populateOptions = populates.split(';').filter(f => f).map(f => f).join(' ');
@@ -48,6 +72,7 @@ class PostsContrller {
     ctx.body = post;
   }
   async findBySeoUrl(ctx) {
+    ctx.verifyParams(findByXXRules)
     let { fields = '', populates = '' } = ctx.query
     const { seoUrl } = ctx.params
     const selectFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('');

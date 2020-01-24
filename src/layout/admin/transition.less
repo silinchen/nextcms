@@ -1,0 +1,22 @@
+// 动画
+/* content-transform */
+.enter {
+  opacity: 0;
+  transform: translateX(-30px);
+  -webkit-transform: translateX(-30px);
+}
+.enterActive {
+  opacity: 1;
+  transition: all .5s;
+  transform: translateX(0px);
+  -webkit-transform: translateX(0px);
+}
+.exit {
+  opacity: 1;
+}
+.exitActive {
+  opacity: 0;
+  transition: all .5s;
+  transform: translateX(30px);
+  -webkit-transform: translateX(30px);
+}

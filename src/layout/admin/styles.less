@@ -18,3 +18,26 @@
   // background: linear-gradient(90deg,#f4f4f5 0%, #f4f4f5 0%, #ebecf1 100%, #ebecf1 100%);
   // background: linear-gradient(90deg, #20b6f9 0%, #20b6f9 0%, #2178f1 100%, #2178f1 100%);
 }
+
+// 动画
+/* content-transform */
+.content_transform_enter {
+  opacity: 0;
+  transform: translateX(-30px);
+  -webkit-transform: translateX(-30px);
+}
+.content_transform_active_enter {
+  opacity: 1;
+  transition: all .5s;
+  transform: translateX(0px);
+  -webkit-transform: translateX(0px);
+}
+.content_transform_exit {
+  opacity: 1;
+}
+.content_transform_active_exit {
+  opacity: 0;
+  transition: all .5s;
+  transform: translateX(30px);
+  -webkit-transform: translateX(30px);
+}

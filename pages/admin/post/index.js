@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
 import { message, Button, Modal } from 'antd'
@@ -6,7 +6,6 @@ import Layout from '@layout/admin'
 import PostTable from '@components/admin/post/post/table'
 import { getPosts, getPostsCount, deletePost } from '@store/actions'
 import withManagerAuth from '@components/withManagerAuth'
-import Sticky from '@components/sticky'
 
 const { confirm } = Modal
 
