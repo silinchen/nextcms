@@ -72,7 +72,7 @@ const Tag = ({ list, total, loadListAndCount, dispatch }) => {
   useEffect(() => {
     loadListAndCount(params)
   }, [current, pageSize])
-
+  console.log(total)
   const pagination = {
     total,
     current,

@@ -1,9 +1,16 @@
 import styles from './styles.less'
+import 'clipboard'
+import 'prismjs'
+import 'prismjs/plugins/line-numbers/prism-line-numbers.js'
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
+import 'prismjs/plugins/toolbar/prism-toolbar.js'
+import 'prismjs/plugins/toolbar/prism-toolbar.css'
+import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js'
 
 const Detail = props => {
   const {
-    title, content, seoUrl, imageUrl, abstract, author, uauthor,
-    pageView, commentNum, likeNum, wordNum, createdDate
+    title, content, author, uauthor,
+    pageView, wordNum, createdDate
   } = props.post
   const avatarUrl = author ? (author.avatarUrl || '') : (uauthor ? (uauthor.avatarUrl || '') : '')
   const nickname = author ? (author.nickname || '') : (uauthor ? (uauthor.nickname || '') : '')
@@ -24,7 +31,7 @@ const Detail = props => {
           </div>
         </div>
       </div>
-      <div className={styles.post__content} dangerouslySetInnerHTML={{ __html: content }} />
+      <div className={`line-numbers ${styles.post__content}`} dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   )
 }
